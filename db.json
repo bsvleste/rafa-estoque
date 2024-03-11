@@ -1,0 +1,18 @@
+{
+  "products": [
+    {
+      "id": "d1e61085-3bd5-73f3-c71e-dcb582f38ea6",
+      "name": "colar ouro",
+      "pricePerKilo": 35,
+      "gramas": 8000,
+      "finalPrice": 280
+    },
+    {
+      "id": "d3330540-c860-d568-2860-436ea55d7fd9",
+      "name": "pigente",
+      "pricePerKilo": 45.89,
+      "gramas": 7000,
+      "finalPrice": 321.23
+    }
+  ]
+}
