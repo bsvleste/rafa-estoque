@@ -22,25 +22,28 @@ const KILO = 1000
 export function Home() {
   const [products, setProducts] = useState<ProductsProps[]>([])
   const [name, setName] = useState('')
-  const [pricePerKilo, setPerKilo] = useState(0)
-  const [gramas, setGramas] = useState(0)
+  const [kilo, setPerKilo] = useState('')
+  const [kiloGramas, setGramas] = useState('')
 
   async function createProduct(e: FormEvent) {
     e.preventDefault()
 
-    const data = {
-      id: uuid(),
+    const campo = {
       name,
-      pricePerKilo: Number(pricePerKilo),
-      gramas: Number(gramas),
-      finalPrice: (pricePerKilo / KILO) * gramas,
+      pricePerKilo: Number(kilo),
+      gramas: Number(kiloGramas),
     }
+    const data = {
+      ...campo,
+      finalPrice: (campo.pricePerKilo / KILO) * campo.gramas,
+    }
+    console.log(data)
     await addDoc(collection(firestore, 'products'), {
       data,
     })
     setName('')
-    setPerKilo(0)
-    setGramas(0)
+    setPerKilo('')
+    setGramas('')
   }
   useEffect(
     () =>
@@ -51,6 +54,7 @@ export function Home() {
             ...doc.data(),
           }
         }) as ProductsProps[]
+        console.log(data)
         setProducts(data)
       }),
     [],
@@ -77,7 +81,7 @@ export function Home() {
             id="pricePerKilo"
             onChange={(e) => setPerKilo(e.target.value)}
             className="text-zinc-900 rounded"
-            value={pricePerKilo}
+            value={kilo}
           />
           <label htmlFor="gramas">Kg</label>
           <input
@@ -85,7 +89,7 @@ export function Home() {
             id="gramas"
             onChange={(e) => setGramas(e.target.value)}
             className="text-zinc-900 rounded"
-            value={gramas}
+            value={kiloGramas}
           />
           <button
             className=" p-4 bg-violet-500 rounded-lg mt-4"
