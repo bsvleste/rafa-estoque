@@ -1,6 +1,5 @@
 import { addDoc, collection, onSnapshot } from 'firebase/firestore'
 import { FormEvent, useEffect, useState } from 'react'
-import uuid from 'react-uuid'
 import { firestore } from '../../firabaseconfig/firabase'
 import { priceFormatter } from '../../utils/formatter'
 export interface ProductsProps {
