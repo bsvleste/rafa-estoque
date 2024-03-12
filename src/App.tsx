@@ -1,20 +1,24 @@
 import { FormEvent, useEffect, useState } from "react"
-import { api } from "./libs/axios"
 import { priceFormatter } from "./utils/formatter"
 import uuid from 'react-uuid';
+import { onSnapshot,collection, addDoc } from "firebase/firestore";
+import { firestore } from "./firabaseconfig/firabase";
 
 export interface ProductsProps{
-  id:number,
-  name:string,
-  pricePerKilo:number
+  id:string,
+  data:{
+
+    name:string,
+    pricePerKilo:number
   gramas:number
   finalPrice:number
+}
 }
 
 const KILO = 1000;
 export function App() {
-
-  const [products,setProducts] = useState<ProductsProps[]>([])
+  
+  const [products,setProducts] = useState<ProductsProps []>([])
   const [name,setName]= useState()
   const [pricePerKilo,setPerKilo]= useState()
   const [gramas,setGramas]= useState()
@@ -28,19 +32,27 @@ const data = {
   gramas:Number(gramas),
   finalPrice: (pricePerKilo / KILO) * gramas
 }
-   await api.post('products',data)
+   await addDoc(collection(firestore,'products'),{
+    data
+   })
   }
+  console.log(products)
+  useEffect(
+    () =>
+      onSnapshot(collection(firestore, 'products'), (snapshot) => {
+        const data =snapshot.docs.map((doc) => {
+          return{
+            id:doc.id,
+            ...doc.data()
+          }
+        })as ProductsProps []
+          setProducts(data)
+        
+      }),
+    [],
+  )
 
-  async function getData(){
-    const {data} = await api.get('products')
-    
-    setProducts(data)
-
-  }
-  useEffect(()=>{
-    getData();
-  },[])
-
+  
   return (
     <div className="w-full h-screen justify-center items-center flex flex-col ">
       <div className="flex justify-center items-center">
@@ -62,17 +74,16 @@ const data = {
           <h1>Preco Final</h1>
         </div>
         {
-          products?.map((product:ProductsProps) =>(
+          products.map((product:ProductsProps) =>(
             <div key={product.id} className="flex gap-2 justify-between">
-              <h1 >{product.name}</h1>
-              <h2>{product.gramas}</h2>
-              <h2>{product.pricePerKilo}</h2>
-              <h2>{priceFormatter.format(product.finalPrice)}</h2>
+              <h1 >{product.data.name}</h1>
+              <h2>{product.data.gramas}</h2>
+              <h2>{product.data.pricePerKilo}</h2>
+              <h2>{priceFormatter.format(product.data.finalPrice)}</h2>
             </div>
               ))
             }
             </div>
-
     </div>
   )
 }
